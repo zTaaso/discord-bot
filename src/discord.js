@@ -55,11 +55,13 @@ client.on('message', async (message) => {
 client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
   await client.user.setStatus('idle');
-  await client.user.setActivity({
+  client.setInterval(async () => {
+    await client.user.setActivity({
     type: 'LISTENING',
     name: 'sua mãe gemendo',
   });
-  // client.user.setActivity({})
+  }, 2000)
+  
 });
 
 client.login(process.env.TOKEN);

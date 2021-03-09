@@ -4,6 +4,7 @@ const client = new Discord.Client(); //Criação de um novo Client
 client.commands = new Discord.Collection();
 
 const { prefix } = require('../config.json'); //Pegando o prefixo do bot para respostas de comandos
+const generateLog = require('./util/generateLog');
 
 const commands = require('./util/getCommands');
 
@@ -12,6 +13,8 @@ commands.forEach((command) => client.commands.set(command.name, command));
 client.on('message', async (message) => {
   try {
     if (message.author.bot) return;
+
+    if (message.content.startsWith(prefix)) generateLog(message);
 
     if (message.channel.type === 'dm') {
       client.commands.get('dm').execute(message);
@@ -23,18 +26,13 @@ client.on('message', async (message) => {
       return;
     }
 
-    const isInsultOn = client.commands.get('insult').enabled;
-    // if (!message.content.startsWith(prefix) && !isinsultOn) return;
-
-    const args = message.content.slice(prefix.length).trim().split(' ');
-    const command = args.shift().toLowerCase();
-
-    if (!message.content.startsWith(prefix) && isInsultOn) {
-      client.commands.get('insult').execute(message, args);
+    if (!message.content.startsWith(prefix)) {
+      client.commands.get('insult').execute(message);
       return;
     }
 
-    if (!message.content.startsWith(prefix)) return;
+    const args = message.content.slice(prefix.length).trim().split(' ');
+    const command = args.shift().toLowerCase();
 
     if (!client.commands.has(command) && message.content.startsWith(prefix)) {
       client.commands.get('inexistent-command').execute(message);
@@ -52,6 +50,16 @@ client.on('message', async (message) => {
       files: [imgError],
     });
   }
+});
+
+client.on('ready', async () => {
+  console.log(`Logged in as ${client.user.tag}!`);
+  await client.user.setStatus('idle');
+  await client.user.setActivity({
+    type: 'LISTENING',
+    name: 'sua mãe gemendo',
+  });
+  // client.user.setActivity({})
 });
 
 client.login(process.env.TOKEN);

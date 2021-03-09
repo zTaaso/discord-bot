@@ -5,19 +5,19 @@ module.exports = {
   args: 'on/off',
   description: `Insult literally everyone in the chat!`,
   enabled: true,
-  enabled_guilds: [],
+  enabled_channels: [],
   public: true,
   safeUsers: ['ztaaso'],
 
-  execute(message, args) {
-    // if (this.safeUsers.includes(message.author.username.toLowerCase())) return;
+  async execute(message, args = []) {
+    const { client } = message;
 
-    let isEnabled = !!this.enabled_guilds.find(
-      (guild) => guild === message.guild.id
+    let isEnabled = !!this.enabled_channels.find(
+      (guild) => guild === message.channel.id
     );
 
     // this.enabled = isEnabled;
-    const guild_id = message.guild.id;
+    const channel_id = message.channel.id;
 
     if (args[0] === 'on') {
       if (isEnabled === true) {
@@ -25,8 +25,14 @@ module.exports = {
         return;
       }
 
-      this.enabled_guilds = this.enabled_guilds.concat([guild_id]);
-      message.channel.send('blz agr vc ativou esse comando chato pra krl');
+      this.enabled_channels = this.enabled_channels.concat([channel_id]);
+      const sentMsg = await message.channel.send(
+        'blz agr vc ativou esse comando chato pra krl'
+      );
+      client.setTimeout(async () => {
+        await sentMsg.delete();
+      }, 3000);
+
       return;
     } else if (args[0] === 'off') {
       if (isEnabled === false) {
@@ -34,10 +40,15 @@ module.exports = {
         return;
       }
 
-      this.enabled_guilds = this.enabled_guilds.filter(
-        (guild) => guild !== guild_id
+      this.enabled_channels = this.enabled_channels.filter(
+        (channel) => channel !== channel_id
       );
-      message.channel.send('blz agr vc desativou esse comando chato pra krl');
+      const sentMsg = await message.channel.send(
+        'blz agr vc desativou esse comando chato pra krl'
+      );
+      client.setTimeout(async () => {
+        await sentMsg.delete();
+      }, 3000);
       return;
     }
 

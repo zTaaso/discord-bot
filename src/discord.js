@@ -4,6 +4,7 @@ const client = new Discord.Client(); //Criação de um novo Client
 client.commands = new Discord.Collection();
 
 const { prefix } = require('../config.json'); //Pegando o prefixo do bot para respostas de comandos
+const fetchRandomSong = require('./util/fetchRandomSong');
 const generateLog = require('./util/generateLog');
 
 const commands = require('./util/getCommands');
@@ -55,13 +56,18 @@ client.on('message', async (message) => {
 client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
   await client.user.setStatus('idle');
+
   client.setInterval(async () => {
+    const song = await fetchRandomSong();
+
+    const song_name = song.track.name;
+    const artist_name = song.track.album.artists[0].name;
+
     await client.user.setActivity({
-    type: 'LISTENING',
-    name: 'sua mãe gemendo',
-  });
-  }, 2000)
-  
+      type: 'LISTENING',
+      name: `${artist_name} - ${song_name}`,
+    });
+  }, 60000 * 5);
 });
 
 client.login(process.env.TOKEN);

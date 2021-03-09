@@ -57,17 +57,22 @@ client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
   await client.user.setStatus('idle');
 
-  client.setInterval(async () => {
-    const song = await fetchRandomSong();
+  client.user.setActivity({
+    type: 'LISTENING',
+    name: 'sua mãe gemendo',
+  });
 
-    const song_name = song.track.name;
-    const artist_name = song.track.album.artists[0].name;
+  // client.setInterval(async () => {
+  //   const song = await fetchRandomSong();
 
-    await client.user.setActivity({
-      type: 'LISTENING',
-      name: `${artist_name} - ${song_name}`,
-    });
-  }, 60000 * 5);
+  //   const song_name = song.track.name;
+  //   const artist_name = song.track.album.artists[0].name;
+
+  //   await client.user.setActivity({
+  //     type: 'LISTENING',
+  //     name: `${artist_name} - ${song_name}`,
+  //   });
+  // }, 60000 * 5);
 });
 
 client.login(process.env.TOKEN);
